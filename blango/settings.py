@@ -32,6 +32,10 @@ class Dev(Configuration):
   DEBUG = values.BooleanValue(True)
 
   ALLOWED_HOSTS = values.ListValue(["localhost", "0.0.0.0", ".codio.io"])
+  
+  # Django Debug Toolbar
+  INTERNAL_IPS = ["192.168.10.92", "192.168.10.31"]
+
   X_FRAME_OPTIONS = 'ALLOW-FROM ' + os.environ.get('CODIO_HOSTNAME') + '-8000.codio.io'
   CSRF_COOKIE_SAMESITE = None
   CSRF_TRUSTED_ORIGINS = ['https://' + os.environ.get('CODIO_HOSTNAME') + '-8000.codio.io']
@@ -53,6 +57,7 @@ class Dev(Configuration):
       'blog',
       "crispy_forms",
       "crispy_bootstrap5",
+      "debug_toolbar",
   ]
 
   # Django Crispy Forms
@@ -68,6 +73,7 @@ class Dev(Configuration):
       'django.contrib.auth.middleware.AuthenticationMiddleware',
       'django.contrib.messages.middleware.MessageMiddleware',
   # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+      'debug_toolbar.middleware.DebugToolbarMiddleware',
   ]
 
   ROOT_URLCONF = 'blango.urls'
