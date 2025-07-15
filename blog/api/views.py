@@ -20,6 +20,7 @@ from blog.api.serializers import (
     TagSerializer,
 )
 from blog.models import Post, Tag
+from blog.api.filters import PostFilterSet
 
 class UserDetail(generics.RetrieveAPIView):
     lookup_field = "email"
@@ -34,6 +35,9 @@ class UserDetail(generics.RetrieveAPIView):
 class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [AuthorModifyOrReadOnly | IsAdminUserForObject]
     queryset = Post.objects.all()
+    filterset_fields = ["author", "tags"]
+    filterset_class = PostFilterSet
+    ordering_fields = ["published_at", "author", "title", "slug"]
 
     @method_decorator(vary_on_headers("Authorization", "Cookie"))
     @method_decorator(cache_page(120))
@@ -88,6 +92,13 @@ class PostViewSet(viewsets.ModelViewSet):
         if request.user.is_anonymous:
             raise PermissionDenied("You must be logged in to see which Posts are yours")
         posts = self.get_queryset().filter(author=request.user)
+
+        page = self.paginate_queryset(posts)
+
+        if page is not None:
+            serializer = PostSerializer(page, many=True, context={"request": request})
+            return self.get_paginated_response(serializer.data)
+
         serializer = PostSerializer(posts, many=True, context={"request": request})
         return Response(serializer.data)
 
