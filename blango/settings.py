@@ -69,7 +69,7 @@ class Dev(Configuration):
       "rest_framework.authtoken",
       "drf_yasg",
       "django_filters",
-
+      "versatileimagefield",
   ]
 
   # Django Crispy Forms
@@ -256,6 +256,12 @@ class Dev(Configuration):
       "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
       "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
   }
+  
+  # Path to upload media to
+  MEDIA_ROOT = BASE_DIR / "media"
+
+  # Path to serve media from
+  MEDIA_URL = "/media/"
 
 
 class Prod(Dev):
